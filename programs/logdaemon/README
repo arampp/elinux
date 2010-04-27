@@ -1,0 +1,57 @@
+
+Overview
+========
+This daemon observes a character device and writes a defined message to syslog
+if the output of the device changed. Currently all configuration (e. g. observed
+devices, messages, log levels) must be hard coded in C. Perhaps I'll change this
+in the future. Feel free to hack this code as you like.
+
+Compiling and Installing
+========================
+You need a working AVR32 Toolchain to crosscompile this code. To run the unit
+tests or run the daemon on your host you will need a native toolchain.
+
+To compile this on your native machine, just type:
+
+  make 
+
+You will have a binary called logdaemon.
+
+
+To run the unit test suite, just type:
+
+  make check
+
+You will need to have installed the check library to perform this.
+
+
+To compile the code for the AVR32 target, type:
+
+  make crosscompile
+
+Or if you want to install it in the same step, type:
+
+  make install
+
+This assumes, that your target root directory is mountet at /srv/ngw100. See
+Makefile. Make install will crosscompile the code, copy logdaemon to /usr/bin
+and copy the start script (S99logdaemon) to /etc/init.d. Logdaemon now should
+start automatically on every boot.
+
+
+Usage
+=====
+
+To run logdaemon just type:
+
+logdaemon
+
+
+If you want to see the log messages also on STDERR, type:
+
+logdaemon -v
+
+
+To start logdaemon as a daemon process, type:
+
+logdaemon -d

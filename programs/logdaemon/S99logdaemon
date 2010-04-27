@@ -1,0 +1,30 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          Controlls the logdaemon
+# Required-Start:    
+# Required-Stop:     
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Logdaemon does write states to syslog in a periodical way.
+# Description:       Logdaemon reads the defined device files and writes the state of the
+#                    devices into syslog. It only writes a new log message when something
+#                    has changed.
+### END INIT INFO
+# Author: Alexander Rampp <dev@axgr.de>
+
+DAEMON=/usr/bin/logdaemon
+
+case "$1" in
+    start)
+        $DAEMON -d
+        ;;
+    stop)
+        killall $DAEMON
+        ;;
+    restart)
+        killall $DAEMON
+        $DAEMON -d
+        ;;
+esac
+
+exit 0
