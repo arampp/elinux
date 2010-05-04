@@ -21,3 +21,11 @@ Um ein neues Paket einzufügen, sind folgende Schritte notwendig:
         * Manuelle Makefiles (veraltet, wird bei neuen Paketen nicht empfohlen)
  #. Tarball nach $BUILDROOT/dl kopieren um dessen download zu verhindern.
 
+Ein vorhandenes Paket neu bauen
+-------------------------------
+ * Einfachste Möglichkeit: output/build/packagename-version löschen. Dadurch
+   wird das Paket erneut entpackt, konfiguriert, kompiliert und installiert
+ * Bei Buildrootpaketen können Stampfiles
+   (ouput/build/packagename-version/.stamp_*) gelöscht werden um einzelne
+   Ereignisse zu triggern. Bei anderen Paketen muss der package.mk file
+   untersucht werden.
