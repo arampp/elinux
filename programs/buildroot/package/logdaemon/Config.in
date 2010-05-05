@@ -1,0 +1,6 @@
+config BR2_PACKAGE_LOGDAEMON 
+       bool "Logdaemon"
+       default n
+       help
+       This is a daemon which observes a character device and logs if the state
+       changes.
