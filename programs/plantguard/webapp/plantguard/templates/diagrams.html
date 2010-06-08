@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}{{days}} Tage{% endblock %}
+
+{% block content %}
+    <h2>Entwicklung der letzten {{ days }} Tage</h2>
+
+    <img src="/static/{{ sensor.diagramfile}}" width="100%"/>
+    <table border="1">
+      <tr>
+        <th>ID</th>
+        <th>Date</th>
+        <th>Value</th>
+        {% for dataitem in sensor.data %}
+            <tr>
+              <td>{{ dataitem.id }}</td>
+              <td>{{ dataitem.pub_date }}</td>
+              <td>{{ dataitem.value }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

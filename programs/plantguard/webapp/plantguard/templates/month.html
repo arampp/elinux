@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Daten{% endblock %}
+
+{% block content %}
+    <h2>Daten</h2>
+    <table border="1">
+      <tr>
+        <th>ID</th>
+        <th>Date</th>
+        <th>Value</th>
+        {% for dataitem in data %}
+            <tr>
+              <td>{{ dataitem.id }}</td>
+              <td>{{ dataitem.pub_date }}</td>
+              <td>{{ dataitem.value }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
