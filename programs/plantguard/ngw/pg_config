@@ -1,0 +1,15 @@
+#-------------------------------------------------------------------------------
+# CONFIGURATION of plantbuard
+#-------------------------------------------------------------------------------
+# URL the web application is hosted.
+URL=http://localhost:8000
+
+# Password to store date in the web app
+PASSWORD=Streng5632Geheim
+
+# The log facility, syslog should log messages from this script
+# see manpage logger(1) for details
+LOG_FACILITY=local0
+
+# DEBUG mode. If set to one, there will be no interaction with external systems.
+DEBUG=1
