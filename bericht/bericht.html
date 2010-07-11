@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
-<title>UART</title>
+<title>Bericht Embedded Linux SS 2010</title>
 <style type="text/css">
 
 /*
@@ -304,9 +304,476 @@ ul.auto-toc {
 </style>
 </head>
 <body>
-<div class="document" id="uart">
-<h1 class="title">UART</h1>
+<div class="document" id="bericht-embedded-linux-ss-2010">
+<h1 class="title">Bericht Embedded Linux SS 2010</h1>
 
+<div class="contents topic" id="inhaltsverzeichnis">
+<p class="topic-title first">Inhaltsverzeichnis</p>
+<ul class="auto-toc simple">
+<li><a class="reference internal" href="#linux-auf-dem-ngw-100" id="id5">1&nbsp;&nbsp;&nbsp;Linux auf dem NGW 100</a><ul class="auto-toc">
+<li><a class="reference internal" href="#inbetriebname-des-ngw-100" id="id6">1.1&nbsp;&nbsp;&nbsp;Inbetriebname des NGW 100</a><ul class="auto-toc">
+<li><a class="reference internal" href="#uboot" id="id7">1.1.1&nbsp;&nbsp;&nbsp;Uboot</a></li>
+<li><a class="reference internal" href="#probleme-und-losungen" id="id8">1.1.2&nbsp;&nbsp;&nbsp;Probleme und Lösungen</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cgi-und-lighttpd" id="id9">1.2&nbsp;&nbsp;&nbsp;CGI und lighttpd</a><ul class="auto-toc">
+<li><a class="reference internal" href="#lighttpd" id="id10">1.2.1&nbsp;&nbsp;&nbsp;lighttpd</a></li>
+<li><a class="reference internal" href="#cgi" id="id11">1.2.2&nbsp;&nbsp;&nbsp;CGI</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#schnittstellen" id="id12">2&nbsp;&nbsp;&nbsp;Schnittstellen</a><ul class="auto-toc">
+<li><a class="reference internal" href="#gpio" id="id13">2.1&nbsp;&nbsp;&nbsp;GPIO</a><ul class="auto-toc">
+<li><a class="reference internal" href="#led-uber-gpio-ansteuern" id="id14">2.1.1&nbsp;&nbsp;&nbsp;LED über GPIO ansteuern:</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#uart" id="id15">2.2&nbsp;&nbsp;&nbsp;UART</a><ul class="auto-toc">
+<li><a class="reference internal" href="#einbinden-in-linux" id="id16">2.2.1&nbsp;&nbsp;&nbsp;Einbinden in Linux</a></li>
+<li><a class="reference internal" href="#ansteuerung-mit-c" id="id17">2.2.2&nbsp;&nbsp;&nbsp;Ansteuerung mit C</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#spi" id="id18">2.3&nbsp;&nbsp;&nbsp;SPI</a><ul class="auto-toc">
+<li><a class="reference internal" href="#eigenschaften" id="id19">2.3.1&nbsp;&nbsp;&nbsp;Eigenschaften</a></li>
+<li><a class="reference internal" href="#id3" id="id20">2.3.2&nbsp;&nbsp;&nbsp;Einbinden in Linux</a></li>
+<li><a class="reference internal" href="#ansteuern" id="id21">2.3.3&nbsp;&nbsp;&nbsp;Ansteuern</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#i2c" id="id22">2.4&nbsp;&nbsp;&nbsp;I2C</a><ul class="auto-toc">
+<li><a class="reference internal" href="#id4" id="id23">2.4.1&nbsp;&nbsp;&nbsp;Eigenschaften</a></li>
+<li><a class="reference internal" href="#ansteuern-unter-linux" id="id24">2.4.2&nbsp;&nbsp;&nbsp;Ansteuern unter Linux</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#projekt-plantguard-bodenfeuchtigkeitsmessung-im-blumenkasten" id="id25">3&nbsp;&nbsp;&nbsp;Projekt: Plantguard - Bodenfeuchtigkeitsmessung im Blumenkasten</a><ul class="auto-toc">
+<li><a class="reference internal" href="#webserver-django" id="id26">3.1&nbsp;&nbsp;&nbsp;Webserver / Django</a></li>
+<li><a class="reference internal" href="#ngw-100" id="id27">3.2&nbsp;&nbsp;&nbsp;NGW 100</a><ul class="auto-toc">
+<li><a class="reference internal" href="#wie-lauft-eine-typische-messung-ab" id="id28">3.2.1&nbsp;&nbsp;&nbsp;Wie läuft eine typische Messung ab?</a></li>
+<li><a class="reference internal" href="#die-einzelnen-komponenten" id="id29">3.2.2&nbsp;&nbsp;&nbsp;Die einzelnen Komponenten</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#selbstgebauter-feuchtigkeitsmesser" id="id30">3.3&nbsp;&nbsp;&nbsp;Selbstgebauter Feuchtigkeitsmesser</a></li>
+<li><a class="reference internal" href="#status-des-projekts" id="id31">3.4&nbsp;&nbsp;&nbsp;Status des Projekts</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="linux-auf-dem-ngw-100">
+<h1><a class="toc-backref" href="#id5">1&nbsp;&nbsp;&nbsp;Linux auf dem NGW 100</a></h1>
+<div class="section" id="inbetriebname-des-ngw-100">
+<h2><a class="toc-backref" href="#id6">1.1&nbsp;&nbsp;&nbsp;Inbetriebname des NGW 100</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Autor:</th><td class="field-body">Alexander Rampp</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="uboot">
+<h3><a class="toc-backref" href="#id7">1.1.1&nbsp;&nbsp;&nbsp;Uboot</a></h3>
+<div class="section" id="upgrade-auf-eine-neue-u-boot-version">
+<h4>Upgrade Auf eine neue U-Boot Version</h4>
+<p>Da das NGW 100 mit einer relativ alten Version von Uboot ausgeliefert wurde,
+musste es zuerst auf eine neue Version upgegradet werden.  Ich entschied mich
+dabei für die Variante, das Image über eine SD Karte zu laden, im Folgenden wird
+die Vorgehensweise beschrieben:</p>
+<div class="section" id="sd-karte-vorbereiten">
+<h5>1. SD-Karte vorbereiten</h5>
+<ol class="arabic simple">
+<li>Flash-Upgrade Image runterladen: <tt class="docutils literal">wget <span class="pre">http://www.atmel.no/buildroot/binaries/u-boot/atngw100/u-boot-atngw100-v2008.10.bin</span></tt></li>
+<li>SD-Karte formatieren: <tt class="docutils literal">mk2fs.ext2 /dev/sdxx</tt></li>
+<li>Image auf Flashkarte als flash-upgrade.uimg kopieren</li>
+<li>Flashkarte unmounten</li>
+</ol>
+</div>
+<div class="section" id="flash-upgrade-starten">
+<h5>2. Flash-Upgrade starten</h5>
+<ol class="arabic simple">
+<li>Flashkarte in NGW100 stecken und reset Knopf drücken</li>
+<li><tt class="docutils literal">Uboot&gt; mmcinit</tt></li>
+<li><tt class="docutils literal">Uboot&gt; ext2load mmc 0:1 0x10400000 <span class="pre">/flash-upgrade.uimg</span></tt></li>
+<li><tt class="docutils literal">Uboot&gt; bootm 0x10400000</tt></li>
+<li>Den Anweisungen folgen</li>
+</ol>
+<p>Hinweis:
+Große SD-Karten werden von U-Boot manchmal nicht erkannt, es kommt dan zu
+folgender Fehlermeldung:</p>
+<pre class="literal-block">
+.bad MBR sector signature 0x0000
+** Bad partition 1 **
+</pre>
+<p>Abhilfe schafft eine andere, kleinere SD-Karte - bei mir funktionierte eine 512
+MB Karte einwandfrei.</p>
+</div>
+</div>
+<div class="section" id="wichtige-umgebungsvariablen-in-uboot">
+<h4>Wichtige Umgebungsvariablen in Uboot</h4>
+<dl class="docutils">
+<dt>bootargs:</dt>
+<dd>Der Inhalt dieser Veriable wird dem Linux Kernel als Bootargumente übergeben.</dd>
+<dt>bootcmd:</dt>
+<dd>Beinhaltet einen Commandstring, der automatisch von U-Boot beim starten
+ausgeführt wird.</dd>
+<dt>ipaddr:</dt>
+<dd>IP von NGW100 wird für tftp gebraucht.</dd>
+<dt>serverip:</dt>
+<dd>Adresse des tftp servers.</dd>
+</dl>
+</div>
+<div class="section" id="wichtige-kommandos-in-uboot">
+<h4>Wichtige Kommandos in Uboot</h4>
+<dl class="docutils">
+<dt>bootm &lt;Addr&gt;:</dt>
+<dd>Booten von der angegebenen Speicheradresse.</dd>
+<dt>setenv &lt;Variable&gt; &lt;String&gt;:</dt>
+<dd>Setzt Umgebungsvariablen.</dd>
+<dt>askenv &lt;Variable&gt;:</dt>
+<dd>Alternatives Kommando zum Setzen von Umgebungsvariablen, frägt Interaktiv nach
+dem Wert der Variablen (bei sehr langen Werten hilfreich).</dd>
+<dt>saveenv:</dt>
+<dd>Sichert die Umgebungsvariablen in den Flash Speicher, so dass sie den Neustart
+überleben.</dd>
+</dl>
+</div>
+<div class="section" id="booten-per-nfs">
+<h4>Booten per NFS</h4>
+<p>Wir gehen davon aus, dass NFS auf dem Host korrekt eingerichtet ist. Unter
+/srv/ngw100 liegt das Root-Dateisystem und unter /srv/ng100/uImage das
+KernelImage. IP Des Hosts: 192.168.1.8, IP des Targets: 192.168.1.4:</p>
+<pre class="literal-block">
+U-Boot&gt; nfs 11000000 192.168.1.8:/srv/ngw100/boot/uImage
+U-Boot&gt; setenv bootargs 'root=nfs nfsroot=192.168.1.8:/srv/ngw100
+ip=192.168.1.4:192.168.1.8::255.255.255.0::eth0:none'
+U-Boot&gt; bootm
+</pre>
+<p>Beim Laden des Kernels kommt es zu folgender Fehlermeldung:
+<tt class="docutils literal">ERROR: Cannot umount</tt>
+Der Kernel wurde aber trozdem geladen - die Meldung kann ignoriert werden.</p>
+<p>Kommt es während des Bootvorgangs zu folgendem Fehler:
+<tt class="docutils literal">Warning: unable to open an initial console.</tt></p>
+<p>Schafft folgendes Workaround abhilfe:
+Aufdem Host:
+<tt class="docutils literal">sudo cp <span class="pre">-a</span> <span class="pre">/dev/{console,null}</span> /srv/ngw100/dev</tt></p>
+<p>Hintergrund ist, dass versucht wird auf dem Host mit 'mknod' die beiden Devices
+anzulen, dies aber fehlschlägt, weil dieser Befehl nur mit Rootrechten
+ausgeführt werden kann.</p>
+</div>
+</div>
+<div class="section" id="probleme-und-losungen">
+<h3><a class="toc-backref" href="#id8">1.1.2&nbsp;&nbsp;&nbsp;Probleme und Lösungen</a></h3>
+<p>Der Folgende Teil enthält einige Problembeschreibungungen und die von mir dazu
+erarbeiteten Lösungen.</p>
+<div class="section" id="dropbear-lasst-sich-nicht-starten-komische-logmeldungen">
+<h4>Dropbear lässt sich nicht starten / komische Logmeldungen</h4>
+<div class="section" id="problem">
+<h5>Problem</h5>
+<ul class="simple">
+<li>Dropbear bleibt beim generieren der Keys hängen.</li>
+<li>Dropbear scheint korrekt zu starten, man kann sich ber SSH einloggen</li>
+<li>In /var/log/messages tauchen folgende Meldungen auf:
+&quot;Warning: Reading the random source seems to have blocked.
+If you experience problems, you probably need to find a better entropy
+source.&quot;</li>
+</ul>
+</div>
+<div class="section" id="losung">
+<h5>Lösung</h5>
+<p>In <em>/etc/init.d/S50dropbear</em> Code am Anfang der <em>start()</em> Funktion einfügen:</p>
+<pre class="literal-block">
+#workaround for /dev/randomproblem
+mv /dev/random /dev/random-blocks
+ln -s /dev/urandom /dev/random
+</pre>
+</div>
+<div class="section" id="hintergrund">
+<h5>Hintergrund</h5>
+<ul class="simple">
+<li>Quelle: <a class="reference external" href="http://www.nslu2-linux.org/wiki/Unslung/KnownProblems">http://www.nslu2-linux.org/wiki/Unslung/KnownProblems</a></li>
+<li>Hintergrundinfos: <a class="reference external" href="http://people.freebsd.org/~dougb/randomness.html">http://people.freebsd.org/~dougb/randomness.html</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="usr-wird-nicht-uber-nfs-geladen">
+<h4>/usr/ wird nicht über nfs geladen</h4>
+<div class="section" id="id1">
+<h5>Problem</h5>
+<ul class="simple">
+<li>Wird ein Programm auf dem Host z. B. nach /usr/bin kopiert, ist es nicht auf
+dem Target auffindbar</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h5>Lösung</h5>
+<dl class="docutils">
+<dt>Sieht man sich /etc/fstab an, sieht man darin folgenden Eintrag::</dt>
+<dd>/dev/mtdblock3  /usr            jffs2           defaults        0       0</dd>
+</dl>
+<p>Scheinbar wird also /usr vom Flashspeicher eingebunden. Kommentiert man diese
+Zeile aus (# davor), wird /usr nach einem Neustart über nfs geladen.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="cgi-und-lighttpd">
+<span id="cgihttpd"></span><h2><a class="toc-backref" href="#id9">1.2&nbsp;&nbsp;&nbsp;CGI und lighttpd</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Autor:</th><td class="field-body">Alexander Rampp</td>
+</tr>
+</tbody>
+</table>
+<p>Sehr praktisch ist die Möglichkeit, auf das NGW100 über eine Weboberfläche
+zuzugreifen.  Am einfachsten geht dies per CGI (Common Gateway Interface),
+einer Schnittstelle zum Datenaustausch zwischen einem Webserver und
+Drittsoftware.  Zudem legt man sich mit CGI nicht auf eine Programmiersprache
+fest, sondern kann nahezu jedes Programm vom Webserver aus ausführen.  Ein
+Nachteil von CGI ist bei größeren Anwendung allerdings die geringe
+Geschwindigkeit.  Bei jedem Aufruf muss ein neuer Prozess gestartet werden, was
+bei hochfrequentierten Seiten schnell zur Überlastung des Servers führt.  Diesem
+Problem begegnet man heutzutage meist, indem man die Interpreter von
+Skriptsprachen direkt in den Webserver einbettet (z. B. mod_perl, mod_php,
+mod_python bei Apache).  Da auf einer Adminoberfläche für ein Embedded Device
+aber meist nur ein Benutzer gleichzeitig arbeitet, reicht für diesen
+Anwendungsfall CGI völlig aus.</p>
+<div class="section" id="lighttpd">
+<h3><a class="toc-backref" href="#id10">1.2.1&nbsp;&nbsp;&nbsp;lighttpd</a></h3>
+<p>Als Webserver kommt <em>lighttpd</em> zum Einsatz, da dieser sehr
+leichtgewichtig aber doch sehr mächtig ist.  Ähnlich wie Apache lässt er sich
+durch Module erweitern.  Darüber hinaus bietet er einige weitere interessante
+Mermale:</p>
+<blockquote>
+<ul class="simple">
+<li>FASTCGI, SCGI</li>
+<li>Lässt sich in einer chroot Umgebung betreiben</li>
+<li>SSL und TLS</li>
+<li>Server Side Includes</li>
+<li>Java-Servlet Unterstützung</li>
+<li>HTTP-Kompression</li>
+</ul>
+</blockquote>
+<p>Im Gegensatz zu großen Webservern lässt sich lighttpd sehr einfach über ein Perl
+Skript konfigurieren.  In der Regel legt man dieses Skript unter
+<em>/etc/lighttpd.conf</em> ab. Im folgenden werden die wichtigsten
+Konfigurationsoptionen an einer Beispielkonfiguration vorgestellt:</p>
+<pre class="literal-block">
+# Module die geladen werden sollen
+
+server.modules = (
+&quot;mod_access&quot;,   # Zugriff auf bestimmte Dateien verbieten
+&quot;mod_cgi&quot;       # CGI support
+)
+
+# Bestimmt wo die Dokumente liegen sollen
+server.document-root = &quot;/www/&quot;
+
+# Logfile
+server.errorlog = &quot;/var/log/lighttpd.log&quot;
+
+# Index Datein (beim Aufruf von z. B. www.example.com wird nach diesen
+# Dateinamen gesucht
+server.indexfiles = (&quot;index.html&quot;, &quot;index.htm&quot;, &quot;index.cgi&quot;, &quot;index.sh&quot;,
+&quot;index.py&quot; )
+
+# Serverport (default 80)
+server.port = 80
+# CGI Konfiguration
+# Syntax &lt;FileExtension&gt; =&gt; &lt;Interpreter&gt;
+cgi.assign = (
+&quot;.py&quot; =&gt; &quot;/usr/bin/python&quot;, # Python Skripte
+&quot;.sh&quot; =&gt; &quot;/bin/bash&quot;        # Shell Skripte
+)
+
+# Mapping von Dateiendungen zu Mimetypes
+mimetype.assign = (
+  &quot;.css&quot; =&gt; &quot;text/css&quot;,
+  &quot;.html&quot; =&gt; &quot;text/html&quot;,
+  &quot;.htm&quot; =&gt; &quot;text/html&quot;,
+  &quot;.js&quot; =&gt; &quot;text/javascript&quot;,
+  &quot;.pdf&quot; =&gt; &quot;application/pdf&quot;,
+}
+</pre>
+<p>Da das lighttpd Paket aus Buildroot kein Startskript mitbringt, habe ich selbst
+eins geschrieben, sodass der Server automatisch startet und sich einfach steuern
+lässt:</p>
+<pre class="literal-block">
+#!/bin/sh
+
+HTTPD=/usr/sbin/lighttpd
+CONFIGFILE=/etc/lighttpd.conf
+
+
+if [ ! -x &quot;${HTTPD}&quot; ]; then
+    echo ${HTTPD} &quot;not found missing&quot;
+    exit 1
+fi
+if [ ! -r ${CONFIGFILE} ]; then
+    echo &quot;Configuration at &quot; ${CONFIGFILE} &quot;not found or not readable&quot;
+    exit 1
+fi
+
+
+case &quot;$1&quot; in
+    start)
+        echo -n &quot;starting lighttpd... &quot;
+        if ${HTTPD} -f ${CONFIGFILE}; then
+          echo &quot;[done]&quot;
+        else
+          echo &quot;[failed]&quot;
+          exit 1
+        fi
+        ;;
+    stop)
+        echo -n &quot;stopping lighttpd... &quot;
+        if killall $(basename ${HTTPD}); then
+            echo &quot;[done]&quot;
+        else
+            echo &quot;[failed]&quot;
+            exit 1
+        fi
+        ;;
+    restart)
+        echo -n &quot;restarting lighttpd... &quot;
+        if killall $(basename ${HTTPD}) &amp;&amp; ${HTTPD} -f ${CONFIGFILE}; then
+            echo &quot;[done]&quot;
+        else
+            echo &quot;[failed]&quot;
+            exit 1;
+        fi
+        ;;
+esac
+exit 0
+</pre>
+<p>Zuerst überprüft das Skript, ob das Binary des Servers ausführbar und die
+Konfigurationsdatei lesbar ist.  Dann wird das erste Argument ausgewertet und
+der Server entsprechend gestartet, gestoppt oder neugestartet.  Ist das Skript
+unter <em>/etc/init.d/S42lighttpd</em> hinterlegt und ausführbar gemacht (<em>chmod +x
+S42lighttpd</em>), kann es wie folgt verwendet werden:</p>
+<pre class="literal-block">
+/etc/init.d # ./S42lighttpd start
+starting lighttpd... [done]
+/etc/init.d # ./S42lighttpd stop
+stopping lighttpd... [done]
+/etc/init.d # ./S42lighttpd start
+starting lighttpd... [done]
+/etc/init.d # ./S42lighttpd restart
+restarting lighttpd... [done]
+</pre>
+</div>
+<div class="section" id="cgi">
+<h3><a class="toc-backref" href="#id11">1.2.2&nbsp;&nbsp;&nbsp;CGI</a></h3>
+<p>Hat man des Server erfolgreich konfiguriert, kann man CGI Skripte darauf
+ausführen.  Um Parameter an das Skript zu übergeben kann man kann man die
+HTTP-Methoden <em>GET</em> oder <em>POST</em> verwenden.</p>
+<dl class="docutils">
+<dt>GET</dt>
+<dd>Bei der GET Methode werden die Argumente einfach an die URL angehängt.  Ein
+'?' ist dabei das Trennzeichen.  Beispiel
+<a class="reference external" href="http://www.example.com?name=Alex&amp;type=Student">http://www.example.com?name=Alex&amp;type=Student</a> . In der Umgebungsvariable
+<em>QUERY_STRING</em> befindet sich dann: &quot;name=Alex&amp;type=Student&quot;.</dd>
+<dt>POST</dt>
+<dd>Bei einem Post Request werden die Daten direkt als zusätzliche Einträge in den
+HTTP Request geschrieben.  Ein CGI Skript bekommt diese Daten über die
+Standarteingabe übergeben.  In der Umgebungsvariable <em>CONTENT_LENGTH</em> befindet
+sich zudem die Anzahl der Zeichen, die bei dem Request übergeben wurden.</dd>
+</dl>
+<p>Um etwas zurück an den Webbrowser zu senden, muss man lediglich auf die
+Standardausgabe schreiben.  Das folgende Skript ermöglicht es, die beiden GPIO
+Leds auf dem NGW100 über eine (sehr einfach gehaltene) Weboberfläche ein- und
+auszuschalten:</p>
+<pre class="literal-block">
+#!/bin/bash
+
+FILE_A=/sys/class/leds/a/brightness
+FILE_B=/sys/class/leds/b/brightness
+
+
+message=&quot;default&quot;
+if [ ${QUERY_STRING} = &quot;A&quot; ]; then
+    message=&quot;A&quot;
+    br=$(cat $FILE_A)
+    if [ $br -ne 0 ]; then
+        echo 0 &gt; $FILE_A
+        message=&quot;null&quot;
+    else
+        echo 1 &gt; $FILE_A
+        message=&quot;eins&quot;
+    fi
+elif [ ${QUERY_STRING} = &quot;B&quot; ]; then
+    br=$(cat $FILE_B)
+    if [ $br -ne 0 ]; then
+        echo 0 &gt; $FILE_B
+    else
+        echo 1 &gt; $FILE_B
+    fi
+fi
+
+echo &quot;&lt;!DOCTYPE HTML PUBLIC \&quot;-//W3C//DTD HTML 4.01 Transitional//EN\&quot;
+       \&quot;http://www.w3.org/TR/html4/loose.dtd\&quot;&gt;
+       &lt;html&gt;
+       &lt;head&gt;
+       &lt;title&gt;Beschreibung der Seite&lt;/title&gt;
+       &lt;/head&gt;
+       &lt;body&gt;
+         &lt;a href=\&quot;/cgi-bin/test.sh?A\&quot;&gt;Led A&lt;/a&gt;&lt;br /&gt;
+         &lt;a href=\&quot;/cgi-bin/test.sh?B\&quot;&gt;Led B&lt;/a&gt;&lt;br /&gt;
+       &lt;/body&gt;
+       &lt;/html&gt;
+
+&quot;
+</pre>
+</div>
+</div>
+</div>
+<div class="section" id="schnittstellen">
+<h1><a class="toc-backref" href="#id12">2&nbsp;&nbsp;&nbsp;Schnittstellen</a></h1>
+<div class="section" id="gpio">
+<h2><a class="toc-backref" href="#id13">2.1&nbsp;&nbsp;&nbsp;GPIO</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Autor:</th><td class="field-body">Alexander Rampp</td>
+</tr>
+</tbody>
+</table>
+<p>Mit dem GPIO Interface können Pins einzeln angesprochen werden. Dazu muss GPIO
+zürst im Kernel aktiviert werden:</p>
+<ul class="simple">
+<li>in Buildroot: <tt class="docutils literal">make <span class="pre">linux26-menuconfig</span></tt></li>
+<li>Haken setzen unter Device Drivers --&gt; GPIO Support --&gt;
+/sys/class/gpio/.. (sysfs interface)</li>
+<li>in Buildroot: <tt class="docutils literal">make</tt></li>
+</ul>
+<p>Anschließend ist das GPIO Sysfs Interface unter /sys/class/gpio verfügbar.</p>
+<div class="section" id="led-uber-gpio-ansteuern">
+<h3><a class="toc-backref" href="#id14">2.1.1&nbsp;&nbsp;&nbsp;LED über GPIO ansteuern:</a></h3>
+<p>Eine Leuchtdiode wird an PA04 (das ist Pin 7 auf J5) gegen GND angeschlossen (WICHTIG: LED
+NIEMALS OHNE VORWIDERSTAND ANSCHLIESSEN!!!). Um Zugriff auf den Pin zu bekommen,
+muss er erstmal konfiguriert werden, danach kann man ihn beliebig auf high
+bzw. low setzen und die LED geht an bzw. aus:</p>
+<pre class="literal-block">
+$ echo 4 &gt; /sys/class/gpio/export               # erstellt unter /sys/class/gpio/gpio4 das API für den PIN
+$ echo &quot;out&quot; &gt; /sys/class/gpio/gpio4/direction  # Pin als Ausgang konfigurieren
+$ echo 1 &gt; /sys/class/gpio/gpio4/value          # Ausgang auf &quot;High&quot; setzen
+$ echo 0 &gt; /sys/class/gpio/gpio4/value          # Ausgang auf &quot;Low&quot; setzen
+$ echo 4 &gt; /sys/class/gpio/unexport             # Pin freigeben
+</pre>
+</div>
+</div>
+<div class="section" id="uart">
+<h2><a class="toc-backref" href="#id15">2.2&nbsp;&nbsp;&nbsp;UART</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Autor:</th><td class="field-body">Alexander Rampp</td>
+</tr>
+</tbody>
+</table>
 <p>Der &quot;Universal Asynchronous Receiver Transmitter&quot; (UART) ist ein Bauelement, das
 die serielle Datenübertragung zwischen zwei Geräten realisiert. Physisch besteht
 das ganze aus 3 Adern:</p>
@@ -334,7 +801,7 @@ Schnittstellen sind über folgende Pins auf dem Board erreichbar:</p>
 <li>USART 3: Port PB15 - PB19</li>
 </ul>
 <div class="section" id="einbinden-in-linux">
-<h1>Einbinden in Linux</h1>
+<h3><a class="toc-backref" href="#id16">2.2.1&nbsp;&nbsp;&nbsp;Einbinden in Linux</a></h3>
 <p>Die UART Schnittstelle muss im Linuxkernel aktiviert werden. Dazu wird
 die Datei <tt class="docutils literal">arch/avr32/boards/atngw100/setup.c</tt> im Kernelverzeichnis
 bearbeitet.  In der Funktion <tt class="docutils literal">setup_board(void)</tt> wird unter folgender Code
@@ -353,9 +820,9 @@ at32_add_device_usart(2);
 unter <tt class="docutils literal"><span class="pre">/dev/{ttyS1,ttyS2}</span></tt> zur Verfügung.</p>
 </div>
 <div class="section" id="ansteuerung-mit-c">
-<h1>Ansteuerung mit C</h1>
+<h3><a class="toc-backref" href="#id17">2.2.2&nbsp;&nbsp;&nbsp;Ansteuerung mit C</a></h3>
 <div class="section" id="uberblick">
-<h2>Überblick</h2>
+<h4>Überblick</h4>
 <p>Da es sich bei den Schnittstellen <tt class="docutils literal">/dev/ttyS*</tt> um Characterdevices handelt,
 können diese einfach wie eine Datei angesteuert werden. Beispiel:</p>
 <pre class="literal-block">
@@ -398,7 +865,7 @@ signalisiert wird, etc.</dd>
 </dl>
 </div>
 <div class="section" id="eingabekonzepte">
-<h2>Eingabekonzepte</h2>
+<h4>Eingabekonzepte</h4>
 <p>Es gibt verschiedene Konzepte, eingehende Bytes zu behandeln.  Um die
 Konformität zu Manpages und anderen HOWTOs zu wahren, verwende ich die
 englischen Bezeichnungen.</p>
@@ -418,10 +885,10 @@ sofort zurück und schickt ein Signal, sobald etwas gelesen wurde.</dd>
 </dl>
 <p>In diesem HOWTO beschränke ich mich auf synchronen Canonical Input, für die
 anderen Modi,
-siehe <a class="reference external" href="http://www.tldp.org/HOWTO/Serial-Programming-HOWTO/x115.html">Serial Programming HOWTO</a>.</p>
+siehe <a class="reference external" href="http://www.tldp.org/HOWTO/Serial-Programming-HOWTO/index.html">Serial Programming HOWTO</a>.</p>
 </div>
 <div class="section" id="konfiguration-der-schnittstelle">
-<h2>Konfiguration der Schnittstelle</h2>
+<h4>Konfiguration der Schnittstelle</h4>
 <p>Zur Konfiguration der Schnittstelle stellt <tt class="docutils literal">termios.h</tt> folgende Funktionen
 zur Verfügung:</p>
 <dl class="docutils">
@@ -431,8 +898,7 @@ zur Verfügung:</p>
 <dd>Schreibt eine neue Konfiguration in die Schnittstelle</dd>
 </dl>
 <p>Um nun Canonical Input Processing zu konfigurieren müssen folgende Flags gesetzt werden
-(Codebeispiel
-von <a class="reference external" href="http://www.tldp.org/HOWTO/Serial-Programming-HOWTO/index.html">Serial Programming HOWTO</a>):</p>
+(Codebeispiel vom Serial Programming HOWTO):</p>
 <pre class="literal-block">
 #define BAUDRATE B38400
 struct termios newtio;
@@ -473,10 +939,477 @@ newtio.c_lflag = ICANON;
 </div>
 </div>
 </div>
-<div class="footer">
-<hr class="footer" />
-Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+<div class="section" id="spi">
+<h2><a class="toc-backref" href="#id18">2.3&nbsp;&nbsp;&nbsp;SPI</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Autor:</th><td class="field-body">Alexander Rampp</td>
+</tr>
+</tbody>
+</table>
+<p>Beim Serial Peripheral Interface handelt es sich um einen von Motorola
+entwickelten, seriellen Bus Standard, bei dem Schaltungen nach dem Master-Slave
+Prinzip verbunden werden.  SPI ist vor allem wegen seiner schnellen
+Datenübertragung (bis zu 10 MHz) im Fullduplex Modus interessant.  Zudem können
+mit einem SPI Device mehrere Geräte angesteuert werden.</p>
+<div class="section" id="eigenschaften">
+<h3><a class="toc-backref" href="#id19">2.3.1&nbsp;&nbsp;&nbsp;Eigenschaften</a></h3>
+<img alt="images/spi.png" src="images/spi.png" />
+<p>Für eine SPI Verbindung sind vier Adern nötig:</p>
+<ul class="simple">
+<li>MISO - Master in Slave out</li>
+<li>MOSI - Master out Slave in</li>
+<li>SCK - Serial Clock</li>
+<li>CS - Chip Select</li>
+</ul>
+<p>Über <em>MISO</em> bzw. <em>MOSI</em> können gleichzeitig Daten übertragen werden
+(vollduplex), <em>SCK</em> gibt ein Taktsignal vor und mit <em>CS</em> wird der
+anzusprechende Slave ausgewählt.  Dabei ist immer der Slave aktiv, bei dem eine
+logische 0 anliegt.</p>
+<p>Jeder SPI Baustein kann als <em>Master</em> oder <em>Slave</em> betrieben
+werden. Der Baustein, der sich im Master Modus befindet, gibt das Taktsignal vor
+und kontrolliert die Chip-Select Leitungen.  Dadurch ergibt sich, dass in einem
+SPI Netz immer nur ein Master aktiv sein kann.  Die Anzahl der Slaves ist
+dagegen nur durch die Anzahl der Chip Select Leitungen begrenzt.</p>
+<p>Realisiert werden die Puffer an <em>MOSI</em> bzw <em>MISO</em> mit
+Schieberegistern.  Die Länge der Schieberegister ist dabei unspezifiziert und
+kann bei den einzelnen Bausteinen abweichen.</p>
+<div class="section" id="spi-modi">
+<h4>SPI Modi</h4>
+<p>Motorola hat die eigentliche Datenübertragung bei SPI nicht spezifiziert.  In
+der Praxis jedoch haben sich vier Modi herausgebildet.  Konfiguriert werden
+diese über die Bits <em>CPOL</em> (Clock Polarity) und <em>CPHA</em> (Clock Phase)
+des SPI Control Registers (<em>SPCR</em>).
+<em>CPOL</em> definiert ob der Zustand logisch 1 oder logisch 0 als aktiv
+angesehen wird.  <em>CPHA</em> definiert ob die Datenübertragung bei steigender
+oder fallender Taktflanke beginnt.</p>
+<img alt="images/spi_takt.png" src="images/spi_takt.png" />
+<table border="1" class="docutils">
+<colgroup>
+<col width="48%" />
+<col width="26%" />
+<col width="26%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">SPI Modus</th>
+<th class="head">CPOL</th>
+<th class="head">CPHA</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr><td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr><td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr><td>3</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>Für eine funktionierende Datenübertragung muss sicher gestellt werden, dass
+sowohl Master, als auch alle Slaves auf den gleichen Modus konfiguriert sind</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h3><a class="toc-backref" href="#id20">2.3.2&nbsp;&nbsp;&nbsp;Einbinden in Linux</a></h3>
+<p>Vor Benutzung muss die SPI Schnittstelle im Linux Kernel aktiviert werden.  Beim
+NGW 100 muss dazu die Datei <em>arch/avr32/boards/atngw100/setup.c</em> bearbeitet
+werden.  Folgender Code legt die Schnittstelle an:</p>
+<pre class="literal-block">
+static struct spi_board_info spi1_board_info[] __initdata = {
+  {
+    .modalias       = &quot;spidev&quot;,
+    .max_speed_hz   = 8000000,
+    .chip_select    = 0,
+  },
+};
+</pre>
+<p>Um die Schnittstelle zu aktivieren, ist noch folgender Aufruf notwendig:</p>
+<pre class="literal-block">
+at32_add_device_spi(1, spi1_board_info, ARRAY_SIZE(spi1_board_info));
+</pre>
+<p>Anschließend ist ein neues Kernelmodul, welches mit dem Shell Befehl <em>modprobe
+spidev</em> geladen werden kann, vorhanden.  Danach befinden sich die Geräte unter
+<em>/dev</em>, z. B. <em>/dev/spidev1.0</em> (Schnittstelle 1, Chip Select 0).</p>
+</div>
+<div class="section" id="ansteuern">
+<h3><a class="toc-backref" href="#id21">2.3.3&nbsp;&nbsp;&nbsp;Ansteuern</a></h3>
+<p><em>open()</em> und <em>close()</em> Operationen auf den spi Devices funktionieren
+wie erwartet.  <em>read()</em> und <em>write()</em> arbeiten aber nur halb-duplex.
+Deshalb empfielt die Treiberdokumentation die Datenübertragung mit
+dem <em>ioctl()</em> Request <em>SPI_IOC_MESSAGE</em>.</p>
+<p>Der Treiber bietet folgende <em>ioctl()</em> Requests an.  Ein gutes Codebeispiel
+findet man im Linuxkernel unter <a class="reference external" href="http://lxr.lfinux.no/#linux+v2.6.34/Documentation/spi/spidev_test.c">Documentation/spi/spidev_test.c</a>.</p>
+<dl class="docutils">
+<dt><em>SPI_IOC_RD_MODE, SPI_IOC_WR_MODE</em></dt>
+<dd>Liest (RD) bzw. setzt (WR) den SPI-Mode mit dem übergebenen Zeiger.  Es
+existieren Konstanten (<em>SPI_MODE_0</em> - <em>SPI_MODE_3</em>) für die
+entsprechenden Werte.</dd>
+<dt><em>SPI_IOC_RD_LSB_FIRST, SPI_IOC_WR_LSB_FIRST</em></dt>
+<dd>Liest (RD) bzw. setzt (WR) die Bitwertigkeit der SPI Wörter.  <em>0</em>
+heißt, das höchstwertige Bit ist an erster Stelle (msb-first), bei anderen
+Werten steht das höchstwertige Bit an letzter stelle (lsb-first).  Siehe dazu
+auch den Wikipedia Artikel <a class="reference external" href="http://de.wikipedia.org/wiki/Bitwertigkei">Bitwertigkeit</a>.</dd>
+<dt><em>SPI_IOC_RD_BITS_PER_WORD, SPI_IOC_WR_BITS_PER_WORD</em></dt>
+<dd>Liest (RD) bzw. setzt (WR) die Wortlänge in Bits mit einem übergebenen
+Zeiger. Der Wert <em>0</em> steht für 8 Bit.</dd>
+<dt><em>SPI_IOC_RD_MAX_SPEED_HZ, SPI_IOC_WR_MAX_SPEED_HZ</em></dt>
+<dd>Liest (RD) bzw. setzt (WR) die Übertragungsgeschwindigkeit in HZ mit einem
+übergebenen Zeiger</dd>
+<dt><em>SPI_IOC_MESSAGE(n)</em></dt>
+<dd>Überträgt Daten via SPI.  Als Parameter wird der Zeiger auf eine Instanz
+des structs <em>spi_ioc_transfer</em> übergeben, <em>n</em>
+ist die Länge des Transferarrays.  Das o. g. Struct enthält u. a. die
+Felder <em>tx_buf</em> (transfer buffer) und <em>rx_buf</em> (receive buffer).</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="i2c">
+<h2><a class="toc-backref" href="#id22">2.4&nbsp;&nbsp;&nbsp;I2C</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Autor:</th><td class="field-body">Alexander Rampp</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="id4">
+<h3><a class="toc-backref" href="#id23">2.4.1&nbsp;&nbsp;&nbsp;Eigenschaften</a></h3>
+<p>Der <em>Inter-Integrated Circuit</em> (I2C oder auch TWI für <em>Two Wire Interface</em>) ist
+ein von Philips in den 1980er Jahren entwickelter Serieller Bus.  Ziel war es,
+die Kommunikation unter verschiedenen Geräten mit möglichst wenigen Leitungen zu
+ermöglichen.</p>
+<img alt="images/i2c.png" src="images/i2c.png" />
+<p>Der I2C kommt mit zwei Leitungen aus.  <em>SDA</em> (Serial Data) überträgt die
+eigentlichen Daten.  <em>SCK</em> (Serial Clock) stellt ein Taktsignal zur Verfügung.
+Beide Leitungen sind über einen Pullup Widerstand mit der Versorgungsspannung
+(VCC) verbunden.  In jedem I2C gibt es einen Master Baustein, der den Takt vorgibt
+sowie eine Kommunikation initiiert.  Es gibt auch Multi-Master Systeme, auf die
+hier aber nicht näher eingegangen wird.</p>
+<p>Ursprünglich war I2C für eine Übertragungsgeschwindigkeit von 100 kHz
+spezifiziert.  Heutige Bausteine arbeiten aber in der Regel mit 400 kHz.  Zudem
+gibt es einen High-Speed-Mode mit bis zu 3,4 MHz, allerdings sind diese
+Bausteine nicht zu 100 bzw. 400 kHz Bausteinen kompatibel.</p>
+<p>Eine Adresse bei I2C besteht immer aus 8 Bit.  Die ersten vier Bit sind dabei
+vom Hersteller vorgegeben, die nächsten drei Bit können frei konfiguriert
+werden.  Das achte Bit zeigt an, ob auf den Baustein lesend oder schreibend
+zugegriffen wird.  Es gibt eine Erweiterung der Adresse auf 10 Bit, auf die in
+diesem Artikel aber nicht weiter eingegangen wird.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="14%" />
+<col width="5%" />
+<col width="5%" />
+<col width="41%" />
+<col width="23%" />
+</colgroup>
+<tbody valign="top">
+<tr><td colspan="4">Adresse</td>
+<td colspan="3">Sub-Adresse</td>
+<td>R/W</td>
+</tr>
+<tr><td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>Wie läuft nun eine typische Kommunikation ab?</p>
+<ol class="arabic simple">
+<li>Master sendet Startsequenz.</li>
+<li>Master sendet Angeforderte Adresse.</li>
+<li>Jeder Slave vergleicht die gesendete Adresse mit der eigenen.</li>
+<li>Der angesprochene Slave schickt ein <em>ACK</em> Signal.</li>
+<li>Master bzw. Slave (abhängig vom R/W Bit) sendet Daten.</li>
+<li>Master sendet Stop Sequenz und gibt somit den Bus wieder frei.</li>
+</ol>
+</div>
+<div class="section" id="ansteuern-unter-linux">
+<h3><a class="toc-backref" href="#id24">2.4.2&nbsp;&nbsp;&nbsp;Ansteuern unter Linux</a></h3>
+<p>Standartmäßig ist die Schnittstelle im Kernel (zumindest bei der Buildroot
+Distribution) schon aktiviert.  Man läd den Treiber, indem man die Module
+<em>i2c-core</em>, <em>i2c-dev</em> und <em>i2c-gpio</em> einbindet.  Zum Beispiel mit Modprobe:</p>
+<pre class="literal-block">
+$ modprobe i2c-core
+$ modprove i2c-dev
+$ modprove i2c-gpio
+</pre>
+<p>Anschließend kann man über die Gerätedatei /dev/i2c-0 auf den Bus zugreifen.
+I2C kann nun auf zwei Arten angesteuert werden: Über das read/write Interface
+oder über das ioctl Interface.</p>
+<p>Aus Gründen der Übersichtlichkeit verzichte ich bei den folgenden Code
+Beispielen auf die Fehlerbehandlung.  In der Praxis sollte man natürlich jeden
+Systemcall auf einen Rückggabewert &lt; 1 überprüfen und den Fehler entsprechend
+behandeln.</p>
+<p>Bevor man überhaupt was ansteuern kann, muss man die Gerätedatei natürlich erst
+einmal öffnen:</p>
+<pre class="literal-block">
+int device_file;
+device_file = open(&quot;/dev/i2c-0&quot;, O_RDWR);
+</pre>
+<div class="section" id="das-read-write-interface">
+<h4>Das Read/Write Interface</h4>
+<p>Vor der Datenübertragung muss die Slave Adresse gesetzt werden.  Das ist die
+Adresse des Gerätes, mit dem wir kommunizieren wollen:</p>
+<pre class="literal-block">
+int slave_address = 0x12;
+ioctl(device_file,I2C_SLAVE,slave_address);
+</pre>
+<p>Nun erstellt man sich ein Bytearray mit den Daten, die man schreiben will.  Der
+erste Eintrag des Arrays entspricht dabei dem Register, das man im Slave
+beschreiben will. Mit einfachen Read/Write System Calls kann man anschließend
+die Daten übertragen:</p>
+<pre class="literal-block">
+buffer[0] = 0x1e /* Register 0x1e im Slave */
+buffer[1] = 0xff /* Erstes Datenbit */
+buffer[2] = 0xe1 /* Zweites Datenbit */
 
+/* Daten in Register schreiben */
+write(device_file, buffer, 3);
+
+/* Daten auslesen */
+read(device_file, buffer, 1);
+/* buffer[0] enthält das gelesene Byte */
+</pre>
+</div>
+<div class="section" id="das-ioctl-interface">
+<h4>Das ioctl Interface</h4>
+<p>Das ioctl bietet mehr Möglichkeiten als das read/write Interface.  Man kann
+dabei über das I2C oder das SMB (ein mit I2C verwantes Protokoll) Protokoll
+kommunizieren.  Da nicht alle Bausteine SMB beherrschen beschränke ich mich hier
+auf das I2C Protokoll.</p>
+<p>Die Headerdateien <em>linux/i2c-dev.h</em>  und <em>/linux/i2c.h</em> stellen dafür zwei
+Structs zur Verfügung:</p>
+<pre class="literal-block">
+/* This is the structure as used in the I2C_RDWR ioctl call */
+struct i2c_rdwr_ioctl_data {
+      struct i2c_msg *msgs;   /* pointers to i2c_msgs */
+      __u32 nmsgs;                    /* number of i2c_msgs */
+};
+
+struct i2c_msg {
+      __u16 addr;     /* slave address                        */
+      __u16 flags;
+      __u16 len;              /* msg length                           */
+      __u8 *buf;              /* pointer to msg data                  */
+};
+</pre>
+<ul class="simple">
+<li><tt class="docutils literal">addr</tt> ist die Slave adresse</li>
+<li><tt class="docutils literal">flags</tt> bestimmt ob geschrieben oder gelesen wird, bei der 10 Bit
+Adressierung gibt es noch weitere Flags (siehe <em>i2c.h</em>)</li>
+<li><tt class="docutils literal">len</tt> Anzahl der Bytes, die gelesen oder geschrieben werden sollen</li>
+<li><tt class="docutils literal">buf</tt> Zeiger auf den Puffer, der die zu schreibenden Daten enthält bzw. wo
+die zu lesenden Daten hingeschrieben werden.</li>
+</ul>
+<p>Das folgende Beispiel überträgt zwei Bytes an einen Slave:</p>
+<pre class="literal-block">
+struct i2c_rdwr_ioctl_data ioctl_data;
+uint8_t msg_data[2] = {0,0};
+ioctl_data.nmsgs = 1;
+ioctl_data.msgs = (struct i2c_msg*) malloc(ioctl_data.nmsgs *
+sizeof(struct i2c_msg));
+ioctl_data.msgs[0].len = 2;
+ioctl_data.msgs[0].flags = 0;
+ioctl_data.msgs[0].addr = 0x1; /* slave address */
+
+msg_data[0] = 0x1; /* register address*/
+msg_data[1] = 0xA; /* data */
+msg_data[2] = 0xB; /* data */
+
+ioctl_data.msgs[0].buf = msg_data;
+ioctl(message.device_handle, I2C_RDWR,(unsigned long) &amp;ioctl_data)
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="projekt-plantguard-bodenfeuchtigkeitsmessung-im-blumenkasten">
+<h1><a class="toc-backref" href="#id25">3&nbsp;&nbsp;&nbsp;Projekt: Plantguard - Bodenfeuchtigkeitsmessung im Blumenkasten</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Autor:</th><td class="field-body">Alexander Rampp</td>
+</tr>
+</tbody>
+</table>
+<p>Das Ziel von Plantguard ist, die Bodenfeuchtigkeit eines Blumenkastens zu messen
+und diese Messwerte in einer Webapplikation zu Visualisieren.  Die Daten sollten
+weltweit abrufbar sein, weshalb die Visualisierung nicht auf dem NGW 100,
+sondern auf einem externen Webserver stattfindet.  Folgendes Diagramm stellt die
+Architektur der Anwendung dar:</p>
+<img alt="Plantguard Architektur" src="images/plantguard_schematics.png" />
+<p>Am A/D Wandler des Mega8 wird ein selbst gebauter Feuchtigkeitsmesser (siehe
+unten) angeschlossen.  Über den A/D Wandler wird der Widerstand im Sensor
+gemessen und über UART an das NGW zurück gegeben.  Auf dem NGW wird dieser
+Rohwert in einen Prozentwert (100 = sehr feucht, 0 = sehr trocken) umgewandelt.
+Dieser wird über eine HTTP Schnittstelle an die Webapplikation übergeben, die
+sie zusammen mit einem Zeitstempel in einer Datenbank speichert.</p>
+<p>Im Folgenden werden die einzelnen Komponenten der Anwendung genauer beschrieben.</p>
+<div class="section" id="webserver-django">
+<h2><a class="toc-backref" href="#id26">3.1&nbsp;&nbsp;&nbsp;Webserver / Django</a></h2>
+<p><a class="reference external" href="http://github.com/BitSchupser/elinux/tree/master/programs/plantguard/webapp/plantguard/">Sourcecode</a></p>
+<p>Auf dem Webserver kommt eine <a class="reference external" href="http://www.djangoproject.com/">Django</a>
+Webapplikation zum Einsatz.  Django ist ein Python Webframework, das das sehr
+schnelle und einfache entwickeln von Webanwendungen unterstützt.  Dazu bringt es
+allerlei Tools und Bibliotheken (z. B. eine Template Engine, einen O/R Mapper,
+Authentifizierung, etc.) mit.  Zudem wollte ich Django schon lange einmal
+ausprobieren und dies bot sich im Rahmen dieses Projektes einfach an.</p>
+<p>Die Django Anwendung besteht streng genommen aus zwei Teilen.</p>
+<p>Zum einen wird eine HTTP Schnittstelle angeboten um auf einfache Weise neue
+Daten abzuspeichern.  Ein Aufruf sieht z. B. so aus:
+<a class="reference external" href="http://www.example.com/store/50/password">http://www.example.com/store/50/password</a> .  Hierbei wird die 'store' Funktion
+(welche einen neuen Datensatz anlegt) aufgerufen.  Diese überprüft zuerst, ob
+der zweite Parameter (hier 'password') dem richtigen Passwort entspricht und
+schreibt anschließen den ersten Parameter (hier '50') zusammen mit einem
+Zeitstempel in die Datenbank.  War alles erfolgreich, wird der HTTP Statuscode
+200 ('OK') zurück gegeben, war das Kennwort falsch, wird 403 ('Forbidden')
+zurückgegeben.  Dieser sehr einfache Authentifizierungsmechanismus ist natürlich
+keineswegs sicher und sollte in einer Produktivumgebung durch einen besseren
+ersetzt werden.  Django bietet hier auch entsprechende Bibliotheken.</p>
+<p>Zum Anderen gibt es ein Web GUI, das die entsprechenden Daten visualisiert.</p>
+<img alt="Plantguard Screenshot" src="images/plantguard_screenshot.jpg" />
+<p>Derzeit bietet dieser Teil der Anwendung zwei Diagramme, die die Entwicklung der
+letzten 24 Stunden bzw. der letzten 30 Tage zeigt.  Zudem gibt es auf der
+Rechten Seite ein Panel, in dem der Benutzer auf einen Blick den aktuellen Wert,
+sowie eine Interpretation des Wertes sieht.  Die Interpretation ist derzeit wie
+folgt implementiert:</p>
+<blockquote>
+<ul class="simple">
+<li>Feuchtigkeit &gt; 20% - 'OK'</li>
+<li>Feuchtigkeit &lt; 20% &amp;&amp; Feuchtigkeit &gt; 5% - 'bald gießen'</li>
+<li>Feuchtigkeit &lt; 5% - 'sofort gießen'</li>
+<li>Feuchtigkeit == -1 'Keine Daten' (Fehlerzustand)</li>
+</ul>
+</blockquote>
+<p>Derzeit sind die Grenzwerte sowie die angezeigten Texte noch hart in einer
+Python Klasse gecoded, im Produktivsystem sollten Sie aber vom Anwender frei
+konfigurierbar sein.</p>
+</div>
+<div class="section" id="ngw-100">
+<h2><a class="toc-backref" href="#id27">3.2&nbsp;&nbsp;&nbsp;NGW 100</a></h2>
+<p>Das NGW 100 hat bei dieser Anwendung mehrere Rollen:</p>
+<blockquote>
+<ul class="simple">
+<li>regelmäßige Durchführung von Messungen</li>
+<li>Messwert in Prozentwert umrechnen</li>
+<li>Prozentwert per HTTP GET Request an Webapplikation liefern</li>
+<li>Konfigurationsoberfläche für den Benutzer darstellen</li>
+</ul>
+</blockquote>
+<p>Ganz nach dem UNIX Prinzip wurden dabei mehrere kleine Programme erstellt,
+welche jeweils genau eine spezielle Aufgabe übernehmen.</p>
+<div class="section" id="wie-lauft-eine-typische-messung-ab">
+<h3><a class="toc-backref" href="#id28">3.2.1&nbsp;&nbsp;&nbsp;Wie läuft eine typische Messung ab?</a></h3>
+<p>Zuerst muss der Benutzer eine initiale Konfiguration (pg_config) gesetzt haben.
+Anschließend wird der ganze Mechanismus regelmäßig von Crond angestoßen und
+läuft wie folgt ab:</p>
+<blockquote>
+<ol class="arabic simple">
+<li><em>crond</em> ruft <em>pg_client.sh</em> auf.</li>
+<li><em>pg_client</em> ruf das C Programm <em>read_value</em> auf.</li>
+<li><em>read_value</em> schickt ein 'A' per UART an den Mega8.</li>
+<li>der AD Wandler des Mega8 misst den Widerstand im Gipsblock und schickt
+diesen per UART zurück.</li>
+<li><em>pg_client.sh</em> rechnet den bekommenen Rohwert in einen Prozentwert um.</li>
+<li><em>pg_client.sh</em> startet mit Hilfe des Shellprogramms <em>curl</em> einen HTTP Request
+und sendet so die Daten an die Webapplikation.</li>
+<li>die Webapplikation versieht den Wert mit einem Zeitstempel und legt ihn in
+die Datenbank.</li>
+</ol>
+</blockquote>
+</div>
+<div class="section" id="die-einzelnen-komponenten">
+<h3><a class="toc-backref" href="#id29">3.2.2&nbsp;&nbsp;&nbsp;Die einzelnen Komponenten</a></h3>
+<div class="section" id="pg-admin-und-pg-config">
+<h4>pg_admin und pg_config</h4>
+<p><a class="reference external" href="http://github.com/BitSchupser/elinux/blob/master/programs/plantguard/ngw/pg_config">pg_config Sourcecode</a></p>
+<p>In der Datei Konfigurationsdatei <em>/etc/pg_config</em> stehen derzeit folgende
+Konfigurationsoptionen zur Verfügung:</p>
+<ul class="simple">
+<li>Die URL der Webapplikation.</li>
+<li>Password für den <em>store</em> Aufruf der Webapplikation.</li>
+<li>Die Log Facility in die <em>syslog</em> loggen soll.</li>
+<li>Ein Debug Schalter - ist Debug aktiviert, findet keine Kommunikation mit
+externen Systemen statt. Anstatt richtiger Messwerte werden Randomwerte
+benutzt.</li>
+</ul>
+<p>Über eine Weboberfläche können diese Werte frei gewählt werden.  Aus Zeitmangel
+konnte diese aber nicht mehr implementiert werden.  Ein Webserver mit CGI ist
+aber konfiguriert (siehe <a class="reference internal" href="#cgihttpd">cgiHttpd</a>), somit sollte die Implementierung schnell
+erledigt sein.</p>
+</div>
+<div class="section" id="pg-client-sh">
+<h4>pg_client.sh</h4>
+<p><a class="reference external" href="http://github.com/BitSchupser/elinux/blob/master/programs/plantguard/ngw/pg_client.sh">pg_client.sh Sourcecode</a></p>
+<p><em>pg_client.sh</em> bildet die Schnittstelle zur Webapplikation. Nachdem es von
+<em>read_value</em> den Rohwert erhalten hat, rechnet es diesen in einen Prozentwert
+und und schickt ihn mit Hilfe des Konsolenprogramms <em>curl</em> an die
+Webapplikation.  Um die Fehlersuche zu erleichtern schreibt das Programm seine
+Aktivitäten (erhaltene / übergebene Werte) über den Syslog Dienst ein ein
+Logfile.</p>
+</div>
+<div class="section" id="read-value">
+<h4>read_value</h4>
+<p><a class="reference external" href="http://github.com/BitSchupser/elinux/tree/master/programs/plantguard/ngw/read_value">read_value Sourcecode</a></p>
+<p><em>read_value</em> ist ein kleines C-Programm, das die UART Schnittstelle
+konfiguriert, ein 'A' per UART sendet und anschließend auf dem UART lauscht, bis
+der Rückgabewert eingetroffen ist.  Dieser Rohwert wird dann auf <em>STDOUT</em>
+geschrieben.  Hat alles funktioniert, wird 0 zurückggeben, anderfalls eine Zahl
+größer 0.</p>
+</div>
+</div>
+</div>
+<div class="section" id="selbstgebauter-feuchtigkeitsmesser">
+<h2><a class="toc-backref" href="#id30">3.3&nbsp;&nbsp;&nbsp;Selbstgebauter Feuchtigkeitsmesser</a></h2>
+<img alt="images/feuchtigkeit_gipsblock.jpg" src="images/feuchtigkeit_gipsblock.jpg" />
+<p>Zur Feuchtigkeitsmessung wird ein Gipsblock verwendet.  Der Gipsblock saugt sich
+ähnlich wie ein Schwamm mit Wasser voll, dadurch verringert sich sein
+Widerstand.  Im Gips stecken zwei Metallnägel, an denen Messleitungen
+herausgeführt wurden.  Versuchsmessungen im Labor zeigten bei einem trockenen
+Gipsblock einen Widerstand von ca. 10 Mega Ohm, in einem befeuchteten 10
+Kilo Ohm (also um den Faktor 1000 geringer).</p>
+<p>Angeschlossen wird der Sensor wie folgt:</p>
+<img alt="images/feuchtigkeit_schaltung.png" src="images/feuchtigkeit_schaltung.png" />
+<p>Die Idee für den Feuchtigkeitssensor kam aus einem <a class="reference external" href="http://www.cheapvegetablegardener.com/2009/11/how-to-make-cheap-soil-moisture-sensor-2.html">Blogartikel</a>,
+die Schaltung stammt von Prof. Dr. Högl.</p>
+</div>
+<div class="section" id="status-des-projekts">
+<h2><a class="toc-backref" href="#id31">3.4&nbsp;&nbsp;&nbsp;Status des Projekts</a></h2>
+<p>Aus Zeitmangel konnte das Projekt leider nicht zu Ende geführt werden. Derzeit
+existieren Implementierungen der Komponenten auf dem NGW (außer der Admin
+Oberfläche), sowie ein Prototyp der Weboberfläche.</p>
+<p>Probleme lagen vor allem bei der Kommunikation zwischen dem NGW 100 und dem
+AnyIO via UART.  Zeitweise kam keine Verbindung zustande, dann konnte vom AnyIO
+nicht gelesen werden, da nur Zeichensalat ankam - die Kommunikation in die
+andere Richtung funktionierte.  Vermutlich ist die UART Schnittstelle falsch
+konfiguriert.  Erschwerend kam hinzu, dass ich den AnyIO mit einem Labornetzteil
+einwandfrei betreiben kann, am NGW100 (was ja auch 3.3 V bringt) nicht.</p>
+<p>Der Sourcecode des Projekts, sowie dieser Bericht sind in meinem <a class="reference external" href="http://github.com/BitSchupser/elinux">GIT Repository</a> auf Git-Hub verfügbar und können nach
+belieben genutzt, verändert und weitergegeben werden.</p>
+</div>
+</div>
 </div>
 </body>
 </html>
